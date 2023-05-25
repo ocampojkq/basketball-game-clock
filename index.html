@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Countdown Timer</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Inter:wght@400;700;800&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+
+        body{
+            font-family: 'Poppins', sans-serif;
+
+        }
+
+        
+
+       .timer {
+            font-size: 4rem;
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            margin: 10px;
+        }
+        .timer-label {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+         
+        }
+        .timer-buttons {
+            text-align: center;
+            margin-top: 20px;
+
+        }
+        .timer-input {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #gameTimeInput{
+            width: 50px;
+            height: 30px;
+        }
+
+        .attribution { font-size: 11px; text-align: center; }
+.attribution a { color: hsl(228, 45%, 44%); }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="timer-label fw-6">Game Clock</h1>
+                <div class="timer">
+                    <span id="gameMinutes">10</span>:<span id="gameSeconds">00</span>
+                </div>
+                <div class="timer-buttons">
+                    <button id="gameStartButton" class="btn btn-primary  btn-md">Start</button>
+                    <button id="gamePauseButton" class="btn btn-secondary btn-md">Pause</button>
+                    <button id="gameResetButton" class="btn btn-danger btn-md">Reset</button>
+                </div>
+                <div class="timer-input pt-5">
+                    <label for="gameTimeInput">Set Time in minutes </label>
+                    <input id="gameTimeInput" type="number" min="1" value="" />
+                    <button id="setGameTimeButton" class="btn btn-primary btn-sm">Set Time</button>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1 class="timer-label fw-6">Shot Clock</h1>
+                <div class="timer">
+                    <span id="shotMinutes">00</span>:<span id="shotSeconds">24</span>
+                </div>
+                <div class="timer-buttons">
+                    <button id="shotStartButton" class="btn btn-primary btn-md">Start</button>
+                    <button id="shotPauseButton" class="btn btn-secondary btn-md">Pause</button>
+                    <button id="shotResetButton" class="btn btn-danger btn-md">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="attribution pt-3">
+       
+        <a href="">Coded by Kit Ocampo</a>.
+      </div>
+
+    <script>
+         var gameSecondsLeft = 600;
+        var shotSecondsLeft = 24;
+        var gameInterval;
+        var shotInterval;
+
+        var gameMinutesElement = document.getElementById('gameMinutes');
+        var gameSecondsElement = document.getElementById('gameSeconds');
+        var shotMinutesElement = document.getElementById('shotMinutes');
+        var shotSecondsElement = document.getElementById('shotSeconds');
+
+        var gameStartButton = document.getElementById('gameStartButton');
+        var gamePauseButton = document.getElementById('gamePauseButton');
+        var gameResetButton = document.getElementById('gameResetButton');
+        var shotStartButton = document.getElementById('shotStartButton');
+        var shotPauseButton = document.getElementById('shotPauseButton');
+        var shotResetButton = document.getElementById('shotResetButton');
+        var gameTimeInput = document.getElementById('gameTimeInput');
+        var setGameTimeButton = document.getElementById('setGameTimeButton');
+
+        gameStartButton.addEventListener('click', startGameTimer);
+        gamePauseButton.addEventListener('click', pauseGameTimer);
+        gameResetButton.addEventListener('click', resetGameTimer);
+        shotStartButton.addEventListener('click', startShotTimer);
+        shotPauseButton.addEventListener('click', pauseShotTimer);
+        shotResetButton.addEventListener('click', resetShotTimer);
+        setGameTimeButton.addEventListener('click', setGameTime);
+
+        function startGameTimer() {
+            gameInterval = setInterval(updateGameTimer, 1000);
+            gameStartButton.disabled = true;
+            gamePauseButton.disabled = false;
+            gameResetButton.disabled = false;
+        }
+
+        function pauseGameTimer() {
+            clearInterval(gameInterval);
+            gameStartButton.disabled = false;
+            gamePauseButton.disabled = true;
+        }
+
+        function resetGameTimer() {
+            clearInterval(gameInterval);
+            var gameTime = parseInt(gameTimeInput.value) || 10;
+            gameSecondsLeft = gameTime * 60;
+            updateGameDisplay();
+            gameStartButton.disabled = false;
+            gamePauseButton.disabled = true;
+            gameResetButton.disabled = true;
+        }
+
+        function updateGameTimer() {
+            gameSecondsLeft--;
+
+            if (gameSecondsLeft < 0) {
+                clearInterval(gameInterval);
+                alert('Game over!');
+                resetGameTimer();
+            }
+
+            updateGameDisplay();
+        }
+
+        function updateGameDisplay() {
+            var minutes = Math.floor(gameSecondsLeft / 60);
+            var seconds = gameSecondsLeft % 60;
+
+            gameMinutesElement.textContent = padNumber(minutes);
+            gameSecondsElement.textContent = padNumber(seconds);
+        }
+
+        function startShotTimer() {
+            shotInterval = setInterval(updateShotTimer, 1000);
+            shotStartButton.disabled = true;
+            shotPauseButton.disabled = false;
+            shotResetButton.disabled = false;
+        }
+
+        function pauseShotTimer() {
+            clearInterval(shotInterval);
+            shotStartButton.disabled = false;
+            shotPauseButton.disabled = true;
+        }
+
+        function resetShotTimer() {
+            clearInterval(shotInterval);
+            shotSecondsLeft = 24;
+            updateShotDisplay();
+            shotStartButton.disabled = false;
+            shotPauseButton.disabled = true;
+            shotResetButton.disabled = true;
+        }
+
+        function updateShotTimer() {
+            shotSecondsLeft--;
+
+            if (shotSecondsLeft < 0) {
+                clearInterval(shotInterval);
+                shotSecondsLeft = 0;
+                resetShotTimer();
+            }
+
+            updateShotDisplay();
+        }
+
+        function updateShotDisplay() {
+            var seconds = shotSecondsLeft;
+
+            shotMinutesElement.textContent = padNumber(0);
+            shotSecondsElement.textContent = padNumber(seconds);
+        }
+
+        function setGameTime() {
+            if (!gameInterval) {
+                var gameTime = parseInt(gameTimeInput.value) || 10;
+                gameSecondsLeft = gameTime * 60;
+                updateGameDisplay();
+            }
+        }
+
+        function padNumber(number) {
+            return number.toString().padStart(2, '0');
+        }
+    </script>
+</body>
+</html>
